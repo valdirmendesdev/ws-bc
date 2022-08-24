@@ -1,0 +1,10 @@
+basePath: /
+info:
+  contact:
+    email: produtos.cloud@seidor.com.br
+    name: Orbit Team
+  description: Exemplo de descricao
+  title: Exemplo de titulo
+  version: "1.0"
+paths: {}
+swagger: "2.0"

@@ -1,0 +1,14 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Exemplo de descricao",
+        "title": "Exemplo de titulo",
+        "contact": {
+            "name": "Orbit Team",
+            "email": "produtos.cloud@seidor.com.br"
+        },
+        "version": "1.0"
+    },
+    "basePath": "/",
+    "paths": {}
+}
