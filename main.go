@@ -10,6 +10,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/swagger"
 	"github.com/valdirmendesdev/ws-bc/adapters/http/handlers/bc"
+	"github.com/valdirmendesdev/ws-bc/config"
 	"github.com/valdirmendesdev/ws-bc/docs"
 )
 
@@ -30,28 +31,17 @@ func main() {
 	app.Use(cors.New())
 	app.Use(logger.New())
 
-	fillAPIDocSettings()
+	sc := config.New(os.Getenv("HOST"), os.Getenv("PORT"))
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = ":8080"
-	} else {
-		port = fmt.Sprintf(":%s", port)
-	}
+	fillAPIDocSettings(sc)
 
 	app.Get("/series/:series_number", bc.Series())
 	app.Get("/series/:series_number/latest/:quantity", bc.SeriesUltimos())
 	app.Get("/docs/*", swagger.HandlerDefault)
-	app.Listen(port)
+	app.Listen(fmt.Sprintf(":%s", sc.Port()))
 }
 
-func fillAPIDocSettings() {
+func fillAPIDocSettings(sc *config.ServiceConfig) {
 
-	host := os.Getenv("HOST")
-
-	if host == "" {
-		host = "localhost:8080"
-	}
-
-	docs.SwaggerInfo.Host = host
+	docs.SwaggerInfo.Host = sc.FullHost()
 }
