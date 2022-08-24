@@ -14,6 +14,4 @@ WORKDIR /app
 
 COPY --from=build /app/myapi .
 
-EXPOSE 8080
-
 ENTRYPOINT ["./myapi"]

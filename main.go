@@ -1,14 +1,23 @@
 package main
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/valdirmendesdev/ws-bc/adapters/http/handlers/bc"
 )
 
 func main() {
 	app := fiber.New()
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = ":8080"
+	} else {
+		port = fmt.Sprintf(":%s", port)
+	}
 
 	app.Get("/series/:series_number", bc.Series())
 	app.Get("/series/:series_number/latest/:quantity", bc.SeriesUltimos())
-	app.Listen(":8080")
+	app.Listen(port)
 }
