@@ -14,14 +14,16 @@ import (
 	"github.com/valdirmendesdev/ws-bc/docs"
 )
 
-// @title Exemplo de titulo
-// @version 1.0
-// @description Exemplo de descricao
+// @title         API Serviços do banco central do Brasil
+// @version       1.0
+// @description   Documentação técnica para utilização dos serviços do banco central do Brasil
 //
-// @contact.name Orbit Team
+// @contact.name  Orbit Team
 // @contact.email produtos.cloud@seidor.com.br
 //
-// @BasePath /
+// @schemes       https
+//
+// @BasePath      /
 func main() {
 
 	app := fiber.New()
@@ -37,7 +39,7 @@ func main() {
 
 	app.Get("/series/:series_number", bc.Series())
 	app.Get("/series/:series_number/latest/:quantity", bc.SeriesUltimos())
-	app.Get("/docs/*", swagger.HandlerDefault)
+	app.Get("/internal-docs/*", swagger.HandlerDefault)
 	app.Listen(fmt.Sprintf(":%s", sc.Port()))
 }
 

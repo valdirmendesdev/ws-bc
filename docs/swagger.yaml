@@ -1,10 +1,108 @@
 basePath: /
+definitions:
+  bc.HTTPError:
+    properties:
+      code:
+        example: 999
+        type: integer
+      message:
+        example: Mensagem de resposta
+        type: string
+    type: object
+  bc.serie:
+    properties:
+      data:
+        type: string
+      valor:
+        type: string
+    type: object
 info:
   contact:
     email: produtos.cloud@seidor.com.br
     name: Orbit Team
-  description: Exemplo de descricao
-  title: Exemplo de titulo
+  description: Documentação técnica para utilização dos serviços do banco central
+    do Brasil
+  title: API Serviços do banco central do Brasil
   version: "1.0"
-paths: {}
+paths:
+  /series/{series_number}:
+    get:
+      description: Executa a consulta dos valores da série informada no parâmetro
+        no período informado como parâmetro
+      parameters:
+      - description: 'Código da série do banco central. Pode encontrada aqui: https://www3.bcb.gov.br/sgspub/localizarseries/localizarSeries.do?method=prepararTelaLocalizarSeries'
+        in: path
+        name: series_number
+        required: true
+        type: integer
+      - description: Data inicial no formato dd/MM/yyyy. Se não informado, será considerado
+          o primeiro dia do mês atual
+        in: query
+        name: from
+        type: string
+      - description: Data final no formato dd/MM/yyyy. Se não informado, será considerada
+          a data atual
+        in: query
+        name: to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/bc.serie'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/bc.HTTPError'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/bc.HTTPError'
+      summary: Retorna uma lista de valores de uma série histórica do banco central
+        em um período específico
+      tags:
+      - Séries
+  /series/{series_number}/latest/{quantity}:
+    get:
+      description: Executa a consulta dos últimos valores da série informada no parâmetro
+      parameters:
+      - description: 'Código da série do banco central. Pode encontrada aqui: https://www3.bcb.gov.br/sgspub/localizarseries/localizarSeries.do?method=prepararTelaLocalizarSeries'
+        in: path
+        name: series_number
+        required: true
+        type: integer
+      - description: Quantidade desejada de últimos valores da série informada. Se
+          informado um valor inválido, será considerado valor 1, ou seja, apenas o
+          último valor.
+        in: path
+        name: quantity
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/bc.serie'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/bc.HTTPError'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/bc.HTTPError'
+      summary: Retorna o último ou os últimos valores de uma série histórica do banco
+        central
+      tags:
+      - Séries
+schemes:
+- https
 swagger: "2.0"

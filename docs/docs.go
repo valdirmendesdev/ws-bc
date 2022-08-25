@@ -18,7 +18,141 @@ const docTemplate = `{
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
-    "paths": {}
+    "paths": {
+        "/series/{series_number}": {
+            "get": {
+                "description": "Executa a consulta dos valores da série informada no parâmetro no período informado como parâmetro",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Séries"
+                ],
+                "summary": "Retorna uma lista de valores de uma série histórica do banco central em um período específico",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Código da série do banco central. Pode encontrada aqui: https://www3.bcb.gov.br/sgspub/localizarseries/localizarSeries.do?method=prepararTelaLocalizarSeries",
+                        "name": "series_number",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Data inicial no formato dd/MM/yyyy. Se não informado, será considerado o primeiro dia do mês atual",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Data final no formato dd/MM/yyyy. Se não informado, será considerada a data atual",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/bc.serie"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/bc.HTTPError"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/bc.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/series/{series_number}/latest/{quantity}": {
+            "get": {
+                "description": "Executa a consulta dos últimos valores da série informada no parâmetro",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Séries"
+                ],
+                "summary": "Retorna o último ou os últimos valores de uma série histórica do banco central",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Código da série do banco central. Pode encontrada aqui: https://www3.bcb.gov.br/sgspub/localizarseries/localizarSeries.do?method=prepararTelaLocalizarSeries",
+                        "name": "series_number",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Quantidade desejada de últimos valores da série informada. Se informado um valor inválido, será considerado valor 1, ou seja, apenas o último valor.",
+                        "name": "quantity",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/bc.serie"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/bc.HTTPError"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/bc.HTTPError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "bc.HTTPError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 999
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Mensagem de resposta"
+                }
+            }
+        },
+        "bc.serie": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "string"
+                },
+                "valor": {
+                    "type": "string"
+                }
+            }
+        }
+    }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
@@ -26,9 +160,9 @@ var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "",
 	BasePath:         "/",
-	Schemes:          []string{},
-	Title:            "Exemplo de titulo",
-	Description:      "Exemplo de descricao",
+	Schemes:          []string{"https"},
+	Title:            "API Serviços do banco central do Brasil",
+	Description:      "Documentação técnica para utilização dos serviços do banco central do Brasil",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }
